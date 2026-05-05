@@ -6,7 +6,7 @@ Format orientiert sich an Michael Nygards ADR-Vorlage.
 
 | Nr | Titel | Status | Datum |
 |---|---|---|---|
-| [0001](0001-monorepo-pnpm-workspaces.md) | Monorepo mit pnpm workspaces | Akzeptiert | 2026-05-04 |
+| [0001](0001-monorepo-struktur.md) | Einzelrepository mit zwei eigenständigen Apps | Akzeptiert | 2026-05-05 |
 | [0002](0002-backend-framework-nestjs.md) | Backend-Framework NestJS | Akzeptiert | 2026-05-04 |
 | [0003](0003-mongodb-library-mongoose.md) | MongoDB-Library Mongoose | Akzeptiert | 2026-05-04 |
 | [0004](0004-graphql-code-first.md) | GraphQL Code-First mit @nestjs/graphql | Akzeptiert | 2026-05-04 |

@@ -9,7 +9,7 @@ Coding Challenge für Schön Klinik. Zweiteilige Applikation: öffentlich aufruf
 - Backend: NestJS, TypeScript, MongoDB (Mongoose), GraphQL Code-First (`@nestjs/graphql`)
 - Frontend: Angular (Standalone Components, Signals), Apollo Angular
 - Auth: JWT mit Refresh (Backoffice), Single-Use Token (öffentlicher Bogen)
-- Monorepo: pnpm workspaces
+- Repository: Einzelrepository, Backend und Frontend als eigenständige npm-Projekte
 - Container: Docker Compose, VS Code Devcontainer
 - Diagramme: Mermaid (direkt in den Markdown-Dateien)
 

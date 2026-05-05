@@ -373,19 +373,16 @@ Weitere Sequenzdiagramme in den jeweiligen Konzeptpapieren:
 │       ├── src/app/
 │       ├── package.json
 │       └── angular.json
-├── packages/
-│   └── shared/                       (geteilte Types, optional)
 ├── docs/                              (dieses Repo)
 ├── docker-compose.yml
-├── package.json                       (root, workspace-config)
-├── pnpm-workspace.yaml
+├── package.json                       (root, Convenience-Scripts für install und start)
 └── README.md
 ```
 
 ## Verweise
 
 ### ADRs
-- ADR-0001: Monorepo mit pnpm workspaces
+- ADR-0001: Einzelrepository mit zwei eigenständigen Apps
 - ADR-0002: Backend-Framework NestJS
 - ADR-0003: MongoDB-Library Mongoose
 - ADR-0004: GraphQL Code-First mit `@nestjs/graphql`

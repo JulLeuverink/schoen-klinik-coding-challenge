@@ -1,0 +1,13 @@
+{
+  "name": "anamnesebogen",
+  "version": "1.0.0",
+  "description": "Coding Challenge fuer die Schoen Kliniken",
+  "license": "ISC",
+  "author": "Julian Leuverink",
+  "scripts": {
+    "install:all": "npm install --prefix apps/backend && npm install --prefix apps/frontend",
+    "start:backend": "npm run start:dev --prefix apps/backend",
+    "start:frontend": "npm run start --prefix apps/frontend",
+    "start:frontend:devcontainer": "npm run start --prefix apps/frontend -- --configuration devcontainer"
+  }
+}

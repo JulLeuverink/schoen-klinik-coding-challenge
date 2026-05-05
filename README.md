@@ -34,7 +34,8 @@ Tech-Entscheidungen sind als ADRs unter `docs/adr/` dokumentiert.
 
 ## Getting Started
 
-_Folgt mit Implementierungsstart._
+TODO: Devcontainer Getting Started schreiben
+TODO: Native Getting Started schreiben
 
 ## Verwendung von KI-Werkzeugen
 

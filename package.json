@@ -9,5 +9,9 @@
     "start:backend": "npm run start:dev --prefix apps/backend",
     "start:frontend": "npm run start --prefix apps/frontend",
     "start:frontend:devcontainer": "npm run start --prefix apps/frontend -- --configuration devcontainer"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.5.1",
+    "@as-integrations/express5": "^1.1.2"
   }
 }

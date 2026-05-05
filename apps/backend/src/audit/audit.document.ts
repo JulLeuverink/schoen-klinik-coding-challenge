@@ -4,7 +4,7 @@ import { AuditAction } from 'src/common/enums/auditAction';
 
 export type AuditEntryDocumentType = HydratedDocument<AuditEntryDocument>;
 
-@Schema({ timestamps: true })
+@Schema()
 export class AuditEntryDocument {
   @Prop({ required: true })
   timestamp!: Date;

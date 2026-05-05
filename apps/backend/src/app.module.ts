@@ -2,9 +2,10 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AppService } from './app.service';
 import { AnamneseModule } from './anamnese/anamnese.module';
+import { AppService } from './app.service';
 import { AuditModule } from './audit/audit.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuditModule } from './audit/audit.module';
     MongooseModule.forRoot('mongodb://mongo:27017/anamnesedb'),
     AnamneseModule,
     AuditModule,
+    UserModule,
   ],
   controllers: [],
   providers: [AppService],

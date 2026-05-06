@@ -1,0 +1,26 @@
+<fieldset class="mb-4">
+  <legend class="h5 mb-3">Vorerkrankungen</legend>
+  @for (condition of CONDITIONS; track condition) {
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        [id]="condition"
+        [checked]="selected().includes(condition)"
+        (change)="toggleConditions(condition)"
+      />
+      <label [for]="condition" class="form-check-label">{{ condition }}</label>
+    </div>
+  }
+  @if (showOther()) {
+    <div class="mt-2">
+      <label class="form-label">Bitte tragen Sie ihre Vorerkrankungen hier ein.</label>
+      <input
+        type="text"
+        [ngModel]="value()?.other"
+        (ngModelChange)="updateOther($event)"
+        class="form-control"
+      />
+    </div>
+  }
+</fieldset>

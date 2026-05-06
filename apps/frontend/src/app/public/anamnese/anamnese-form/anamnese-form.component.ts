@@ -1,16 +1,20 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateAnamneseGQL, CreateAnamneseInput } from '../../../graphql/generated';
+import { PreExistingConditionsValue } from './pre-existing-conditions/pre-existing-conditions-value.type';
+import { PreExistingConditionsComponent } from './pre-existing-conditions/pre-existing-conditions.component';
 
 @Component({
-  selector: 'app-anamnese-form.component',
-  imports: [ReactiveFormsModule],
+  selector: 'app-anamnese-form',
+  imports: [ReactiveFormsModule, PreExistingConditionsComponent],
   templateUrl: './anamnese-form.component.html',
   styleUrl: './anamnese-form.component.css',
 })
 export class AnamneseFormComponent {
   private formBuilder = inject(FormBuilder);
   private createAnamneseService = inject(CreateAnamneseGQL);
+
+  preExistingConditions = signal<PreExistingConditionsValue | null>(null);
 
   form = this.formBuilder.group({
     firstName: ['', Validators.required],
@@ -36,6 +40,7 @@ export class AnamneseFormComponent {
           input: {
             ...values,
             dateOfBirth: new Date(dateOfBirth!),
+            preExistingConditions: this.preExistingConditions() || undefined,
           } as CreateAnamneseInput,
         },
       })

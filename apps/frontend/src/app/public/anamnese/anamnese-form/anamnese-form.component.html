@@ -1,44 +1,95 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <fieldset>
-    <legend>Persönliche Daten</legend>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <h1 class="mb-4">Anamnesebogen</h1>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <fieldset class="mb-4">
+          <legend class="h5 mb-3">Persönliche Daten</legend>
+          <div class="mb-3">
+            <label class="form-label">Vorname</label>
+            <input type="text" class="form-control" formControlName="firstName" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nachname</label>
+            <input type="text" class="form-control" formControlName="lastName" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Geburtsdatum</label>
+            <input type="date" class="form-control" formControlName="dateOfBirth" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">E-Mail</label>
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+        </fieldset>
 
-    <label>
-      Vorname
-      <input type="text" formControlName="firstName" />
-    </label>
-    <label>
-      Nachname
-      <input type="text" formControlName="lastName" />
-    </label>
-    <label>
-      Geburtsdatum
-      <input type="date" formControlName="dateOfBirth" />
-    </label>
-    <label>
-      E-Mail
-      <input type="email" formControlName="email" />
-    </label>
-  </fieldset>
+        <fieldset class="mb-4">
+          <legend class="h5 mb-3">Handelt es sich um einen Arbeitsunfall?</legend>
+          <div class="form-check">
+            <input
+              type="radio"
+              class="form-check-input"
+              formControlName="workplaceAccident"
+              [value]="true"
+              id="accidentYes"
+            />
+            <label class="form-check-label" for="accidentYes">Ja</label>
+          </div>
+          <div class="form-check mb-3">
+            <input
+              type="radio"
+              class="form-check-input"
+              formControlName="workplaceAccident"
+              [value]="false"
+              id="accidentNo"
+            />
+            <label class="form-check-label" for="accidentNo">Nein</label>
+          </div>
+          @if (form.value.workplaceAccident) {
+            <div class="mb-3">
+              <label class="form-label">Welche BG und ggf. Aktenzeichen</label>
+              <textarea class="form-control" formControlName="workplaceAccidentDetails"></textarea>
+            </div>
+          }
+        </fieldset>
 
-  <fieldset>
-    <legend>Weitere Angaben</legend>
-    <label>
-      Was sind Ihre Beschwerden und seit wann haben Sie Beschwerden?
-      <textarea formControlName="complaintsAndOnset"></textarea>
-    </label>
-    <label>
-      Wer ist ihr behandelnder Hausarzt?
-      <input type="text" formControlName="primaryCarePhysician" />
-    </label>
-    <label>
-      Nehmen Sie regelmäßig Medikamente ein, wenn ja, welche?
-      <input type="text" formControlName="medications" />
-    </label>
-    <label>
-      <input type="checkbox" formControlName="signatureConfirmed" />
-      Ich bestätige die Richtigkeit meiner Angaben und akzeptiere die Datenschutzerklärung.
-    </label>
-  </fieldset>
-  <button type="submit" [disabled]="form.invalid">Anamnese Abschicken</button>
-  <!-- <button type="button" (click)="onSubmit()">Check</button> -->
-</form>
+        <fieldset class="mb-4">
+          <legend class="h5 mb-3">Weitere Angaben</legend>
+          <div class="mb-3">
+            <label class="form-label">Was sind Ihre Beschwerden und seit wann?</label>
+            <textarea class="form-control" rows="3" formControlName="complaintsAndOnset"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Behandelnder Hausarzt</label>
+            <input type="text" class="form-control" formControlName="primaryCarePhysician" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Regelmäßige Medikamente</label>
+            <input type="text" class="form-control" formControlName="medications" />
+          </div>
+        </fieldset>
+
+        <app-pre-existing-conditions
+          [value]="preExistingConditions()"
+          (valueChange)="preExistingConditions.set($event)"
+        />
+
+        <div class="form-check mb-4">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            formControlName="signatureConfirmed"
+            id="signatureConfirmed"
+          />
+          <label class="form-check-label" for="signatureConfirmed">
+            Ich bestätige die Richtigkeit meiner Angaben und akzeptiere die Datenschutzerklärung.
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+          Anamnese Abschicken
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

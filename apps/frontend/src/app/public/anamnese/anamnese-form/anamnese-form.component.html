@@ -89,6 +89,19 @@
         <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
           Anamnese Abschicken
         </button>
+        @if (verificationLink()) {
+          <div class="alert alert-info mt-4">
+            <strong>Demo-Hinweis:</strong> In einer echten Anwendung würde der Bestätigungslink per
+            E-Mail versendet.
+            <div class="mt-2 d-flex align-items-center gap-2">
+              <code class="flex-grow-1 text-break">{{ verificationLink() }}</code>
+              <!-- <button class="btn btn-sm btn-outline-secondary" (click)="copyLink()">
+                {{ copied() ? 'Kopiert!' : 'Kopieren' }}
+              </button> -->
+            </div>
+            <a [href]="verificationLink()" class="btn btn-primary mt-3 d-block">Link öffnen</a>
+          </div>
+        }
       </form>
     </div>
   </div>

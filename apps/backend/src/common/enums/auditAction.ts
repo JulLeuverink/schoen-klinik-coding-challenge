@@ -1,4 +1,5 @@
 export enum AuditAction {
-  BLA,
-  BLUB,
+    CREATE = 'CREATE',
+    EMAIL_VERIFIED = 'EMAIL_VERIFIED',
+    STATUS_TRANSITION = 'STATUS_TRANSITION',
 } //TODO: richtige Actions einfügen

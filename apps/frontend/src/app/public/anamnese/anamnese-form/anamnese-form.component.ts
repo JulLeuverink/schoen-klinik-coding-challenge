@@ -15,6 +15,7 @@ export class AnamneseFormComponent {
   private createAnamneseService = inject(CreateAnamneseGQL);
 
   preExistingConditions = signal<PreExistingConditionsValue | null>(null);
+  verificationLink = signal<string | null>(null);
 
   form = this.formBuilder.group({
     firstName: ['', Validators.required],
@@ -45,7 +46,10 @@ export class AnamneseFormComponent {
         },
       })
       .subscribe({
-        next: (result) => console.log(result.data),
+        next: (result) => {
+          const link = result.data?.createAnamnese.verificationLinkForDemo ?? null;
+          this.verificationLink.set(link);
+        },
         error: (err) => console.error(err),
       });
   }

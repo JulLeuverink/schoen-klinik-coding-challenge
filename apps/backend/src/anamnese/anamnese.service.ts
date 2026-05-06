@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { AuditService } from 'src/audit/audit.service';
 import { AnamneseStatus } from 'src/common/enums/anamneseStatus';
+import { DAY } from 'src/common/utils/dateUtils';
 import { Anamnese } from './anamnese';
 import { AnamneseDocument, AnamneseDocumentType } from './anamnese.document';
 import { CreateAnamneseInput } from './create-anamnese.input';
@@ -12,6 +14,7 @@ export class AnamneseService {
     constructor(
         @InjectModel(AnamneseDocument.name)
         private anamneseModel: Model<AnamneseDocumentType>,
+        private auditService: AuditService,
     ) {}
 
     private mapAnamneseDoc(doc: AnamneseDocumentType): Anamnese {
@@ -42,13 +45,18 @@ export class AnamneseService {
     }
 
     async create(input: CreateAnamneseInput): Promise<SubmissionResult> {
+        const token = crypto.randomUUID();
+        const expiresAt = new Date(Date.now() + DAY);
         const doc = await this.anamneseModel.create({
             ...input,
             status: AnamneseStatus.PENDING_VERIFICATION,
+            emailVerificationToken: token,
+            emailVerificationTokenExpiresAt: expiresAt,
         });
+        await this.auditService.recordCreate(doc._id);
         return {
             success: true,
-            verificationLinkForDemo: 'hier-den-Link-generieren',
+            verificationLinkForDemo: `http://localhost:4200/anamnese/bestaetigung/${token}`,
         };
     }
 }

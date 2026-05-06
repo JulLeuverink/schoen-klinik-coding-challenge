@@ -16,7 +16,6 @@ export class PreExistingConditionsComponent {
 
   selected = computed(() => this.value()?.selected ?? []);
   showOther = computed(() => this.selected().includes('Sonstiges'));
-  hasError = computed(() => this.selected().includes('Sonstiges') && !this.value()?.other);
 
   toggleConditions(condition: string): void {
     const currentSelectedConditions = this.selected();
@@ -35,8 +34,6 @@ export class PreExistingConditionsComponent {
       this.valueChange.emit(null);
       return;
     }
-    // this.hasError() hat zum Zeitpunkt des emits noch den aktuellen Stand.
-    const hasError = this.selected().includes('Sonstiges') && !this.value()?.other;
     this.valueChange.emit({
       selected: selected,
       other: other,

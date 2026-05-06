@@ -1,0 +1,44 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <fieldset>
+    <legend>Persönliche Daten</legend>
+
+    <label>
+      Vorname
+      <input type="text" formControlName="firstName" />
+    </label>
+    <label>
+      Nachname
+      <input type="text" formControlName="lastName" />
+    </label>
+    <label>
+      Geburtsdatum
+      <input type="date" formControlName="dateOfBirth" />
+    </label>
+    <label>
+      E-Mail
+      <input type="email" formControlName="email" />
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Weitere Angaben</legend>
+    <label>
+      Was sind Ihre Beschwerden und seit wann haben Sie Beschwerden?
+      <textarea formControlName="complaintsAndOnset"></textarea>
+    </label>
+    <label>
+      Wer ist ihr behandelnder Hausarzt?
+      <input type="text" formControlName="primaryCarePhysician" />
+    </label>
+    <label>
+      Nehmen Sie regelmäßig Medikamente ein, wenn ja, welche?
+      <input type="text" formControlName="medications" />
+    </label>
+    <label>
+      <input type="checkbox" formControlName="signatureConfirmed" />
+      Ich bestätige die Richtigkeit meiner Angaben und akzeptiere die Datenschutzerklärung.
+    </label>
+  </fieldset>
+  <button type="submit" [disabled]="form.invalid">Anamnese Abschicken</button>
+  <!-- <button type="button" (click)="onSubmit()">Check</button> -->
+</form>

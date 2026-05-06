@@ -1,0 +1,6 @@
+mutation CreateAnamnese($input: CreateAnamneseInput!) {
+  createAnamnese(input: $input) {
+    success
+    verificationLinkForDemo
+  }
+}

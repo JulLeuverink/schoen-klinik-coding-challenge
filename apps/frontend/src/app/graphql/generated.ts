@@ -17,7 +17,7 @@ export type Scalars = {
   Int: { input: number; output: number };
   Float: { input: number; output: number };
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: { input: unknown; output: unknown };
+  DateTime: { input: string; output: string };
 };
 
 export type Anamnese = {
@@ -40,6 +40,14 @@ export type Anamnese = {
   workplaceAccidentDetails?: Maybe<Scalars['String']['output']>;
 };
 
+export enum AnamneseAction {
+  Archive = 'ARCHIVE',
+  Complete = 'COMPLETE',
+  Reject = 'REJECT',
+  Review = 'REVIEW',
+  Verify = 'VERIFY',
+}
+
 export enum AnamneseStatus {
   Archived = 'ARCHIVED',
   Completed = 'COMPLETED',
@@ -50,23 +58,33 @@ export enum AnamneseStatus {
   Submitted = 'SUBMITTED',
 }
 
-export type CreateAnamneseInput = {
-  complaintsAndOnset?: InputMaybe<Scalars['String']['input']>;
-  dateOfBirth: Scalars['DateTime']['input'];
-  email: Scalars['String']['input'];
-  firstName: Scalars['String']['input'];
-  lastName: Scalars['String']['input'];
-  medications?: InputMaybe<Scalars['String']['input']>;
-  preExistingConditions?: InputMaybe<PreExistingConditionsInput>;
-  primaryCarePhysician?: InputMaybe<Scalars['String']['input']>;
-  signatureConfirmed: Scalars['Boolean']['input'];
-  workplaceAccident?: Scalars['Boolean']['input'];
-  workplaceAccidentDetails?: InputMaybe<Scalars['String']['input']>;
+export enum AuditAction {
+  Create = 'CREATE',
+  EmailVerified = 'EMAIL_VERIFIED',
+  StatusTransition = 'STATUS_TRANSITION',
+}
+
+export type AuditActor = {
+  __typename?: 'AuditActor';
+  role?: Maybe<Scalars['String']['output']>;
+  type: Scalars['String']['output'];
+  userId?: Maybe<Scalars['String']['output']>;
+};
+
+export type AuditEntry = {
+  __typename?: 'AuditEntry';
+  action: AuditAction;
+  actor: AuditActor;
+  entityId: Scalars['ID']['output'];
+  entityType: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  timestamp: Scalars['DateTime']['output'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   createAnamnese: SubmissionResult;
+  transition: Anamnese;
   verifyAnamneseEmail: VerificationResult;
 };
 
@@ -74,8 +92,13 @@ export type MutationCreateAnamneseArgs = {
   input: CreateAnamneseInput;
 };
 
+export type MutationTransitionArgs = {
+  action: AnamneseAction;
+  anamneseId: Scalars['String']['input'];
+};
+
 export type MutationVerifyAnamneseEmailArgs = {
-  input: Scalars['String']['input'];
+  token: Scalars['String']['input'];
 };
 
 export type PreExistingConditions = {
@@ -84,14 +107,23 @@ export type PreExistingConditions = {
   selected: Array<Scalars['String']['output']>;
 };
 
-export type PreExistingConditionsInput = {
-  other?: InputMaybe<Scalars['String']['input']>;
-  selected: Array<Scalars['String']['input']>;
-};
-
 export type Query = {
   __typename?: 'Query';
   getAnamneses: Array<Anamnese>;
+  getAuditEntries: Array<AuditEntry>;
+  getOneAnamnese: Anamnese;
+};
+
+export type QueryGetAnamnesesArgs = {
+  status?: InputMaybe<AnamneseStatus>;
+};
+
+export type QueryGetAuditEntriesArgs = {
+  anamneseId: Scalars['String']['input'];
+};
+
+export type QueryGetOneAnamneseArgs = {
+  anamneseId: Scalars['String']['input'];
 };
 
 export type SubmissionResult = {
@@ -105,6 +137,54 @@ export type VerificationResult = {
   error?: Maybe<Scalars['String']['output']>;
   success: Scalars['Boolean']['output'];
 };
+
+export type CreateAnamneseInput = {
+  complaintsAndOnset?: string | null | undefined;
+  dateOfBirth: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  medications?: string | null | undefined;
+  preExistingConditions?: PreExistingConditionsInput | null | undefined;
+  primaryCarePhysician?: string | null | undefined;
+  signatureConfirmed: boolean;
+  workplaceAccident?: boolean;
+  workplaceAccidentDetails?: string | null | undefined;
+};
+
+export type PreExistingConditionsInput = {
+  other?: string | null | undefined;
+  selected: Array<string>;
+};
+
+export type GetAnamnesesQueryVariables = Exact<{
+  status?: AnamneseStatus | null | undefined;
+}>;
+
+export type GetAnamnesesQuery = {
+  getAnamneses: Array<{
+    id: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    email: string;
+    status: AnamneseStatus;
+    signatureConfirmed: boolean;
+  }>;
+};
+
+export type GetAnamneseQueryVariables = Exact<{
+  id: string | number;
+}>;
+
+export type GetAnamneseQuery = Record<PropertyKey, never>;
+
+export type TransitionAnamneseStatusMutationVariables = Exact<{
+  id: string | number;
+  action: AnamneseAction;
+}>;
+
+export type TransitionAnamneseStatusMutation = Record<PropertyKey, never>;
 
 export type CreateAnamneseMutationVariables = Exact<{
   input: CreateAnamneseInput;
@@ -122,6 +202,85 @@ export type VerifyAnamneseEmailMutation = {
   verifyAnamneseEmail: { success: boolean; error: string | null };
 };
 
+export const GetAnamnesesDocument = gql`
+  query GetAnamneses($status: AnamneseStatus) {
+    getAnamneses(status: $status) {
+      id
+      firstName
+      lastName
+      dateOfBirth
+      email
+      status
+      signatureConfirmed
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetAnamnesesGQL extends Apollo.Query<GetAnamnesesQuery, GetAnamnesesQueryVariables> {
+  document = GetAnamnesesDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const GetAnamneseDocument = gql`
+  query GetAnamnese($id: ID!) {
+    getAnamnese(id: $id) {
+      id
+      firstName
+      lastName
+      dateOfBirth
+      email
+      status
+      complaintsAndOnset
+      workplaceAccident
+      workplaceAccidentDetails
+      primaryCarePhysician
+      medications
+      preExistingConditions {
+        selected
+        other
+      }
+      emailVerifiedAt
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetAnamneseGQL extends Apollo.Query<GetAnamneseQuery, GetAnamneseQueryVariables> {
+  document = GetAnamneseDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const TransitionAnamneseStatusDocument = gql`
+  mutation TransitionAnamneseStatus($id: ID!, $action: AnamneseAction!) {
+    transitionAnamneseStatus(id: $id, action: $action) {
+      id
+      status
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class TransitionAnamneseStatusGQL extends Apollo.Mutation<
+  TransitionAnamneseStatusMutation,
+  TransitionAnamneseStatusMutationVariables
+> {
+  document = TransitionAnamneseStatusDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
 export const CreateAnamneseDocument = gql`
   mutation CreateAnamnese($input: CreateAnamneseInput!) {
     createAnamnese(input: $input) {

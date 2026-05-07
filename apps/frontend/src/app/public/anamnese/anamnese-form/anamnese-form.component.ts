@@ -40,7 +40,7 @@ export class AnamneseFormComponent {
         variables: {
           input: {
             ...values,
-            dateOfBirth: new Date(dateOfBirth!),
+            dateOfBirth: dateOfBirth,
             preExistingConditions: this.preExistingConditions() || undefined,
           } as CreateAnamneseInput,
         },

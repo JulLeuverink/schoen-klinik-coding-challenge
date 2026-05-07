@@ -1,0 +1,58 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Anamnesebögen</h1>
+  </div>
+
+  <div class="mb-3 d-flex gap-2 flex-wrap">
+    <button class="btn btn-sm btn-outline-secondary" (click)="statusFilter.set(null)">
+      Alle
+    </button>
+    @for (status of statusOptions; track status) {
+      <button
+        class="btn btn-sm"
+        [class.btn-primary]="statusFilter() === status"
+        [class.btn-outline-primary]="statusFilter() !== status"
+        (click)="statusFilter.set(status)"
+      >
+        {{ status }}
+      </button>
+    }
+  </div>
+
+  @if (anamneses() === null) {
+    <p class="text-muted">Wird geladen...</p>
+  } @else if (anamneses()!.length === 0) {
+    <p class="text-muted">Keine Einträge gefunden.</p>
+  } @else {
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Name</th>
+          <th>E-Mail</th>
+          <th>Geburtsdatum</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (anamnese of anamneses()!; track anamnese.id) {
+          <tr>
+            <td>{{ anamnese.firstName }} {{ anamnese.lastName }}</td>
+            <td>{{ anamnese.email }}</td>
+            <td>{{ anamnese.dateOfBirth | date:'dd.MM.yyyy' }}</td>
+            <td>
+              <span class="badge" [class]="statusBadgeClass(anamnese.status)">
+                {{ anamnese.status }}
+              </span>
+            </td>
+            <td>
+              <a [routerLink]="['/backoffice/anamnesen', anamnese.id]" class="btn btn-sm btn-outline-secondary">
+                Details
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

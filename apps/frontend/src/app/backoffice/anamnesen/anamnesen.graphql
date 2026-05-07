@@ -1,0 +1,39 @@
+query GetAnamneses($status: AnamneseStatus) {
+  getAnamneses(status: $status) {
+    id
+    firstName
+    lastName
+    dateOfBirth
+    email
+    status
+    signatureConfirmed
+  }
+}
+
+query GetAnamnese($id: ID!) {
+  getAnamnese(id: $id) {
+    id
+    firstName
+    lastName
+    dateOfBirth
+    email
+    status
+    complaintsAndOnset
+    workplaceAccident
+    workplaceAccidentDetails
+    primaryCarePhysician
+    medications
+    preExistingConditions {
+      selected
+      other
+    }
+    emailVerifiedAt
+  }
+}
+
+mutation TransitionAnamneseStatus($id: ID!, $action: AnamneseAction!) {
+  transitionAnamneseStatus(id: $id, action: $action) {
+    id
+    status
+  }
+}

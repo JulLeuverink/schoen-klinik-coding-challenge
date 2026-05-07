@@ -8,6 +8,9 @@ const config: CodegenConfig = {
     'src/app/graphql/generated.ts': {
       plugins: ['typescript', 'typescript-operations', 'typescript-apollo-angular'],
       config: {
+        scalars: {
+          DateTime: 'string',
+        },
         skipDocumentsValidation: true,
       },
     },

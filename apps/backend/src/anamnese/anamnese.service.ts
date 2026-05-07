@@ -86,7 +86,7 @@ export class AnamneseService {
         );
         doc.emailVerifiedAt = new Date();
         await doc.save();
-        //TODO: audit record email verified
+        await this.auditService.recordEMailVerified(doc._id);
         return {
             success: true,
         };

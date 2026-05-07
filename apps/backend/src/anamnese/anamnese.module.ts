@@ -5,6 +5,7 @@ import { AnamneseDocument, AnamneseSchema } from './anamnese.document';
 import { AnamneseResolver } from './anamnese.resolver';
 import { AnamneseService } from './anamnese.service';
 import { StatusService } from './status/status.service';
+import { BackofficeResolver } from './backoffice/backoffice.resolver';
 
 @Module({
     imports: [
@@ -13,6 +14,6 @@ import { StatusService } from './status/status.service';
         ]),
         AuditModule,
     ],
-    providers: [AnamneseResolver, AnamneseService, StatusService],
+    providers: [AnamneseResolver, AnamneseService, StatusService, BackofficeResolver],
 })
 export class AnamneseModule {}

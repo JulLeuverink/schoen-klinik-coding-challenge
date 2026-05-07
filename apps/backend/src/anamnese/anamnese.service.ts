@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuditService } from 'src/audit/audit.service';
@@ -20,6 +20,11 @@ export class AnamneseService {
         private auditService: AuditService,
         private statusService: StatusService,
     ) {}
+
+    private readonly NOT_FOUND_TEXT =
+        'Anamnese konnte nicht gefunden werden. Id: ';
+    private readonly VERIFICATION_LINK_BASE =
+        'http://localhost:4200/anamnese/bestaetigung/';
 
     private mapAnamneseDoc(doc: AnamneseDocumentType): Anamnese {
         return {
@@ -43,9 +48,16 @@ export class AnamneseService {
         };
     }
 
-    async findAll(): Promise<Anamnese[]> {
-        const docs = await this.anamneseModel.find().exec();
+    async findAll(status?: AnamneseStatus): Promise<Anamnese[]> {
+        const filter = status ? { status } : {};
+        const docs = await this.anamneseModel.find(filter).exec();
         return docs.map((doc) => this.mapAnamneseDoc(doc));
+    }
+
+    async findOne(anamneseId: string): Promise<Anamnese> {
+        const doc = await this.anamneseModel.findById(anamneseId).exec();
+        if (!doc) throw new NotFoundException(this.NOT_FOUND_TEXT + anamneseId);
+        return this.mapAnamneseDoc(doc);
     }
 
     async create(input: CreateAnamneseInput): Promise<SubmissionResult> {
@@ -60,7 +72,7 @@ export class AnamneseService {
         await this.auditService.recordCreate(doc._id);
         return {
             success: true,
-            verificationLinkForDemo: `http://localhost:4200/anamnese/bestaetigung/${token}`,
+            verificationLinkForDemo: this.VERIFICATION_LINK_BASE + token,
         };
     }
 
@@ -90,5 +102,23 @@ export class AnamneseService {
         return {
             success: true,
         };
+    }
+
+    async transition(
+        anamneseId: string,
+        action: AnamneseAction,
+        userId: string,
+    ): Promise<Anamnese> {
+        const doc = await this.anamneseModel.findById(anamneseId).exec();
+        if (!doc) throw new NotFoundException(this.NOT_FOUND_TEXT + anamneseId);
+
+        const currentStatus = doc.status;
+        const newStatus = this.statusService.transition(currentStatus, action);
+        doc.status = newStatus;
+        await doc.save();
+
+        await this.auditService.recordStatusTransition(doc._id, userId);
+
+        return this.mapAnamneseDoc(doc);
     }
 }

@@ -1,8 +1,17 @@
 <div class="container py-5">
   <div class="row justify-content-center">
     <div class="col-lg-7 text-center">
-      <h1 class="mb-3">E-Mail bestätigt</h1>
-      <p>Ihre E-Mail-Adresse wurde erfolgreich bestätigt. Ihr Anamnesebogen wird nun bearbeitet.</p>
+      @if (success() === null) {
+        <h1 class="mb-3">Wird überprüft...</h1>
+      } @else if (success()) {
+        <h1 class="mb-3">E-Mail bestätigt</h1>
+        <p>
+          Ihre E-Mail-Adresse wurde erfolgreich bestätigt. Ihr Anamnesebogen wird nun bearbeitet.
+        </p>
+      } @else {
+        <h1 class="mb-3">Es ist ein Fehler aufgetreten!</h1>
+        <p class="text-danger">{{ error() }}</p>
+      }
     </div>
   </div>
 </div>

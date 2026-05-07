@@ -8,6 +8,7 @@ import { Anamnese } from './anamnese';
 import { AnamneseDocument, AnamneseDocumentType } from './anamnese.document';
 import { CreateAnamneseInput } from './create-anamnese.input';
 import { SubmissionResult } from './submissionResult';
+import { VerificationResult } from './verify-anamnese/verification-result';
 
 @Injectable()
 export class AnamneseService {
@@ -57,6 +58,31 @@ export class AnamneseService {
         return {
             success: true,
             verificationLinkForDemo: `http://localhost:4200/anamnese/bestaetigung/${token}`,
+        };
+    }
+
+    async verifyEmail(token: string): Promise<VerificationResult> {
+        const doc = await this.anamneseModel.findOne({
+            emailVerificationToken: token,
+        });
+
+        if (!doc) return { success: false, error: 'Kein gültiges Token!' };
+        if (
+            !doc.emailVerificationTokenExpiresAt ||
+            doc.emailVerificationTokenExpiresAt < new Date()
+        )
+            return { success: false, error: 'Das Token ist abgelaufen!' };
+        if (doc.status !== AnamneseStatus.PENDING_VERIFICATION)
+            return {
+                success: false,
+                error: 'Deine E-Mail wurde bereits bestätigt.',
+            };
+        doc.status = AnamneseStatus.SUBMITTED; //TODO: State Machine
+        doc.emailVerifiedAt = new Date();
+        await doc.save();
+        //TODO: audit record email verified
+        return {
+            success: true,
         };
     }
 }

@@ -50,19 +50,43 @@ export enum AnamneseStatus {
   Submitted = 'SUBMITTED',
 }
 
+export type CreateAnamneseInput = {
+  complaintsAndOnset?: InputMaybe<Scalars['String']['input']>;
+  dateOfBirth: Scalars['DateTime']['input'];
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  medications?: InputMaybe<Scalars['String']['input']>;
+  preExistingConditions?: InputMaybe<PreExistingConditionsInput>;
+  primaryCarePhysician?: InputMaybe<Scalars['String']['input']>;
+  signatureConfirmed: Scalars['Boolean']['input'];
+  workplaceAccident?: Scalars['Boolean']['input'];
+  workplaceAccidentDetails?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createAnamnese: SubmissionResult;
+  verifyAnamneseEmail: VerificationResult;
 };
 
 export type MutationCreateAnamneseArgs = {
   input: CreateAnamneseInput;
 };
 
+export type MutationVerifyAnamneseEmailArgs = {
+  input: Scalars['String']['input'];
+};
+
 export type PreExistingConditions = {
   __typename?: 'PreExistingConditions';
   other?: Maybe<Scalars['String']['output']>;
   selected: Array<Scalars['String']['output']>;
+};
+
+export type PreExistingConditionsInput = {
+  other?: InputMaybe<Scalars['String']['input']>;
+  selected: Array<Scalars['String']['input']>;
 };
 
 export type Query = {
@@ -76,23 +100,10 @@ export type SubmissionResult = {
   verificationLinkForDemo: Scalars['String']['output'];
 };
 
-export type CreateAnamneseInput = {
-  complaintsAndOnset?: string | null | undefined;
-  dateOfBirth: unknown;
-  email: string;
-  firstName: string;
-  lastName: string;
-  medications?: string | null | undefined;
-  preExistingConditions?: PreExistingConditionsInput | null | undefined;
-  primaryCarePhysician?: string | null | undefined;
-  signatureConfirmed: boolean;
-  workplaceAccident?: boolean;
-  workplaceAccidentDetails?: string | null | undefined;
-};
-
-export type PreExistingConditionsInput = {
-  other?: string | null | undefined;
-  selected: Array<string>;
+export type VerificationResult = {
+  __typename?: 'VerificationResult';
+  error?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type CreateAnamneseMutationVariables = Exact<{
@@ -101,6 +112,14 @@ export type CreateAnamneseMutationVariables = Exact<{
 
 export type CreateAnamneseMutation = {
   createAnamnese: { success: boolean; verificationLinkForDemo: string };
+};
+
+export type VerifyAnamneseEmailMutationVariables = Exact<{
+  token: string;
+}>;
+
+export type VerifyAnamneseEmailMutation = {
+  verifyAnamneseEmail: { success: boolean; error: string | null };
 };
 
 export const CreateAnamneseDocument = gql`
@@ -120,6 +139,28 @@ export class CreateAnamneseGQL extends Apollo.Mutation<
   CreateAnamneseMutationVariables
 > {
   document = CreateAnamneseDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const VerifyAnamneseEmailDocument = gql`
+  mutation VerifyAnamneseEmail($token: String!) {
+    verifyAnamneseEmail(token: $token) {
+      success
+      error
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VerifyAnamneseEmailGQL extends Apollo.Mutation<
+  VerifyAnamneseEmailMutation,
+  VerifyAnamneseEmailMutationVariables
+> {
+  document = VerifyAnamneseEmailDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

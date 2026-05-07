@@ -3,6 +3,7 @@ import { Anamnese } from './anamnese';
 import { AnamneseService } from './anamnese.service';
 import { CreateAnamneseInput } from './create-anamnese.input';
 import { SubmissionResult } from './submissionResult';
+import { VerificationResult } from './verify-anamnese/verification-result';
 
 @Resolver()
 export class AnamneseResolver {
@@ -18,5 +19,12 @@ export class AnamneseResolver {
         @Args('input') input: CreateAnamneseInput,
     ): Promise<SubmissionResult> {
         return this.anamneseService.create(input);
+    }
+
+    @Mutation(() => VerificationResult)
+    async verifyAnamneseEmail(
+        @Args('token') token: string,
+    ): Promise<VerificationResult> {
+        return this.anamneseService.verifyEmail(token);
     }
 }

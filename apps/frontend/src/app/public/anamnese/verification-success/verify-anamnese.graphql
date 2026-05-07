@@ -1,0 +1,6 @@
+mutation VerifyAnamneseEmail($token: String!) {
+  verifyAnamneseEmail(token: $token) {
+    success
+    error
+  }
+}

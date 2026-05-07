@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { AuditService } from 'src/audit/audit.service';
+import { AnamneseAction } from 'src/common/enums/anamneseAction';
 import { AnamneseStatus } from 'src/common/enums/anamneseStatus';
 import { DAY } from 'src/common/utils/dateUtils';
 import { Anamnese } from './anamnese';
 import { AnamneseDocument, AnamneseDocumentType } from './anamnese.document';
 import { CreateAnamneseInput } from './create-anamnese.input';
+import { StatusService } from './status/status.service';
 import { SubmissionResult } from './submissionResult';
 import { VerificationResult } from './verify-anamnese/verification-result';
 
@@ -16,6 +18,7 @@ export class AnamneseService {
         @InjectModel(AnamneseDocument.name)
         private anamneseModel: Model<AnamneseDocumentType>,
         private auditService: AuditService,
+        private statusService: StatusService,
     ) {}
 
     private mapAnamneseDoc(doc: AnamneseDocumentType): Anamnese {
@@ -77,7 +80,10 @@ export class AnamneseService {
                 success: false,
                 error: 'Deine E-Mail wurde bereits bestätigt.',
             };
-        doc.status = AnamneseStatus.SUBMITTED; //TODO: State Machine
+        doc.status = this.statusService.transition(
+            doc.status,
+            AnamneseAction.VERIFY,
+        );
         doc.emailVerifiedAt = new Date();
         await doc.save();
         //TODO: audit record email verified

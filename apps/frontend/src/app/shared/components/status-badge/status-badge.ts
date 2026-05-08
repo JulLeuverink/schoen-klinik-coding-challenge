@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { AnamneseStatus } from '../../../graphql/generated';
+import { StatusMap } from './statusMap';
 
 @Component({
   selector: 'app-status-badge',
@@ -9,18 +10,13 @@ import { AnamneseStatus } from '../../../graphql/generated';
 })
 export class StatusBadge {
   status = input.required<AnamneseStatus>();
+  map = StatusMap;
 
-  private readonly map: Record<AnamneseStatus, string> = {
-    [AnamneseStatus.PendingVerification]: 'bg-warning text-dark',
-    [AnamneseStatus.Submitted]: 'bg-info text-dark',
-    [AnamneseStatus.InReview]: 'bg-primary',
-    [AnamneseStatus.Completed]: 'bg-success',
-    [AnamneseStatus.Rejected]: 'bg-danger',
-    [AnamneseStatus.Archived]: 'bg-secondary',
-    [AnamneseStatus.Expired]: 'bg-dark',
-  };
+  get statusClass(): string {
+    return this.map[this.status()!].class;
+  }
 
-  get statusClass() {
-    return this.map[this.status()!];
+  get statusValue() {
+    return this.map[this.status()!].value;
   }
 }

@@ -11,28 +11,27 @@
       <app-status-badge [status]="anamnese()!.status"></app-status-badge>
     </div>
 
-    <app-card>
-      <div class="card-title">Patientendaten</div>
-
-      <dl class="row mb-0">
-        <dt class="col-sm-5">E-Mail</dt>
-        <dd class="col-sm-7">{{ anamnese()!.email }}</dd>
-
-        <dt class="col-sm-5">Geburtsdatum</dt>
-        <dd class="col-sm-7">{{ anamnese()!.dateOfBirth | date: 'dd.MM.yyyy' }}</dd>
-
-        <dt class="col-sm-5">E-Mail verifiziert</dt>
-        <dd class="col-sm-7">
-          @if (anamnese()!.emailVerifiedAt) {
-            {{ anamnese()!.emailVerifiedAt | date: 'dd.MM.yyyy HH:mm' }}
-          } @else {
-            <span class="text-muted">Nein</span>
-          }
-        </dd>
-      </dl>
-    </app-card>
-
     <div class="row g-4">
+      <app-card>
+        <div class="card-title">Patientendaten</div>
+
+        <dl class="row mb-0">
+          <dt class="col-sm-5">E-Mail</dt>
+          <dd class="col-sm-7">{{ anamnese()!.email }}</dd>
+
+          <dt class="col-sm-5">Geburtsdatum</dt>
+          <dd class="col-sm-7">{{ anamnese()!.dateOfBirth | date: 'dd.MM.yyyy' }}</dd>
+
+          <dt class="col-sm-5">E-Mail verifiziert</dt>
+          <dd class="col-sm-7">
+            @if (anamnese()!.emailVerifiedAt) {
+              {{ anamnese()!.emailVerifiedAt | date: 'dd.MM.yyyy HH:mm' }}
+            } @else {
+              <span class="text-muted">Nein</span>
+            }
+          </dd>
+        </dl>
+      </app-card>
       <app-card>
         <div class="card-title">Aktionen</div>
         <app-anamnese-actions
@@ -44,17 +43,17 @@
       <app-card>
         <div class="card-title">Anamnese</div>
         <dl class="row mb-0">
-          <dt class="col-sm-4">Beschwerden und Beginn</dt>
-          <dd class="col-sm-8">{{ anamnese()!.complaintsAndOnset ?? '–' }}</dd>
+          <dt class="col-sm-5">Beschwerden und Beginn</dt>
+          <dd class="col-sm-7">{{ anamnese()!.complaintsAndOnset ?? '–' }}</dd>
 
-          <dt class="col-sm-4">Hausarzt</dt>
-          <dd class="col-sm-8">{{ anamnese()!.primaryCarePhysician ?? '–' }}</dd>
+          <dt class="col-sm-5">Hausarzt</dt>
+          <dd class="col-sm-7">{{ anamnese()!.primaryCarePhysician ?? '–' }}</dd>
 
-          <dt class="col-sm-4">Medikamente</dt>
-          <dd class="col-sm-8">{{ anamnese()!.medications ?? '–' }}</dd>
+          <dt class="col-sm-5">Medikamente</dt>
+          <dd class="col-sm-7">{{ anamnese()!.medications ?? '–' }}</dd>
 
-          <dt class="col-sm-4">Arbeitsunfall</dt>
-          <dd class="col-sm-8">
+          <dt class="col-sm-5">Arbeitsunfall</dt>
+          <dd class="col-sm-7">
             @if (anamnese()!.workplaceAccident) {
               Ja
               @if (anamnese()!.workplaceAccidentDetails) {

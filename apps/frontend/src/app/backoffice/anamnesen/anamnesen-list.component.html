@@ -12,7 +12,7 @@
         [class.btn-outline-primary]="statusFilter() !== status"
         (click)="statusFilter.set(status)"
       >
-        {{ status }}
+        {{ statusMap[status].value }}
       </button>
     }
   </div>
@@ -35,7 +35,7 @@
       <tbody>
         @for (anamnese of anamneses()!; track anamnese.id) {
           <tr>
-            <td>{{ anamnese.firstName }} {{ anamnese.lastName }}</td>
+            <td>{{ fullName(anamnese.firstName, anamnese.lastName) }}</td>
             <td>{{ anamnese.email }}</td>
             <td>{{ anamnese.dateOfBirth | date: 'dd.MM.yyyy' }}</td>
             <td>

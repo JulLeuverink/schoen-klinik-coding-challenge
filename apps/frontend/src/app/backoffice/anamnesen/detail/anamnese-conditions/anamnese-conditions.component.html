@@ -1,0 +1,15 @@
+<dt class="col-sm-4">Vorerkrankungen</dt>
+<dd class="col-sm-8">
+  @if (contiditons()?.selected?.length === 0 || !contiditons()?.other) {
+    <span class="text-muted">Keine</span>
+  } @else {
+    <ul class="mb-0 ps-3">
+      @for (condition of contiditons()?.selected; track condition) {
+        <li>{{ condition }}</li>
+      }
+      @if (contiditons()?.other) {
+        <li>Sonstiges: {{ contiditons()!.other }}</li>
+      }
+    </ul>
+  }
+</dd>

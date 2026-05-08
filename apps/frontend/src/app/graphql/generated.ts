@@ -22,6 +22,7 @@ export type Scalars = {
 
 export type Anamnese = {
   __typename?: 'Anamnese';
+  availableActions: Array<AnamneseAction>;
   complaintsAndOnset?: Maybe<Scalars['String']['output']>;
   dateOfBirth: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
@@ -81,6 +82,20 @@ export type AuditEntry = {
   timestamp: Scalars['DateTime']['output'];
 };
 
+export type CreateAnamneseInput = {
+  complaintsAndOnset?: InputMaybe<Scalars['String']['input']>;
+  dateOfBirth: Scalars['DateTime']['input'];
+  email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
+  medications?: InputMaybe<Scalars['String']['input']>;
+  preExistingConditions?: InputMaybe<PreExistingConditionsInput>;
+  primaryCarePhysician?: InputMaybe<Scalars['String']['input']>;
+  signatureConfirmed: Scalars['Boolean']['input'];
+  workplaceAccident?: Scalars['Boolean']['input'];
+  workplaceAccidentDetails?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createAnamnese: SubmissionResult;
@@ -105,6 +120,11 @@ export type PreExistingConditions = {
   __typename?: 'PreExistingConditions';
   other?: Maybe<Scalars['String']['output']>;
   selected: Array<Scalars['String']['output']>;
+};
+
+export type PreExistingConditionsInput = {
+  other?: InputMaybe<Scalars['String']['input']>;
+  selected: Array<Scalars['String']['input']>;
 };
 
 export type Query = {
@@ -138,25 +158,6 @@ export type VerificationResult = {
   success: Scalars['Boolean']['output'];
 };
 
-export type CreateAnamneseInput = {
-  complaintsAndOnset?: string | null | undefined;
-  dateOfBirth: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  medications?: string | null | undefined;
-  preExistingConditions?: PreExistingConditionsInput | null | undefined;
-  primaryCarePhysician?: string | null | undefined;
-  signatureConfirmed: boolean;
-  workplaceAccident?: boolean;
-  workplaceAccidentDetails?: string | null | undefined;
-};
-
-export type PreExistingConditionsInput = {
-  other?: string | null | undefined;
-  selected: Array<string>;
-};
-
 export type GetAnamnesesQueryVariables = Exact<{
   status?: AnamneseStatus | null | undefined;
 }>;
@@ -174,17 +175,37 @@ export type GetAnamnesesQuery = {
 };
 
 export type GetAnamneseQueryVariables = Exact<{
-  id: string | number;
+  id: string;
 }>;
 
-export type GetAnamneseQuery = Record<PropertyKey, never>;
+export type GetAnamneseQuery = {
+  getOneAnamnese: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    dateOfBirth: string;
+    email: string;
+    status: AnamneseStatus;
+    complaintsAndOnset: string | null;
+    workplaceAccident: boolean | null;
+    workplaceAccidentDetails: string | null;
+    primaryCarePhysician: string | null;
+    medications: string | null;
+    emailVerifiedAt: string | null;
+    signatureConfirmed: boolean;
+    availableActions: Array<AnamneseAction>;
+    preExistingConditions: { selected: Array<string>; other: string | null } | null;
+  };
+};
 
 export type TransitionAnamneseStatusMutationVariables = Exact<{
-  id: string | number;
+  anamneseId: string;
   action: AnamneseAction;
 }>;
 
-export type TransitionAnamneseStatusMutation = Record<PropertyKey, never>;
+export type TransitionAnamneseStatusMutation = {
+  transition: { id: string; status: AnamneseStatus };
+};
 
 export type CreateAnamneseMutationVariables = Exact<{
   input: CreateAnamneseInput;
@@ -227,8 +248,8 @@ export class GetAnamnesesGQL extends Apollo.Query<GetAnamnesesQuery, GetAnamnese
   }
 }
 export const GetAnamneseDocument = gql`
-  query GetAnamnese($id: ID!) {
-    getAnamnese(id: $id) {
+  query GetAnamnese($id: String!) {
+    getOneAnamnese(anamneseId: $id) {
       id
       firstName
       lastName
@@ -245,6 +266,8 @@ export const GetAnamneseDocument = gql`
         other
       }
       emailVerifiedAt
+      signatureConfirmed
+      availableActions
     }
   }
 `;
@@ -260,8 +283,8 @@ export class GetAnamneseGQL extends Apollo.Query<GetAnamneseQuery, GetAnamneseQu
   }
 }
 export const TransitionAnamneseStatusDocument = gql`
-  mutation TransitionAnamneseStatus($id: ID!, $action: AnamneseAction!) {
-    transitionAnamneseStatus(id: $id, action: $action) {
+  mutation TransitionAnamneseStatus($anamneseId: String!, $action: AnamneseAction!) {
+    transition(anamneseId: $anamneseId, action: $action) {
       id
       status
     }

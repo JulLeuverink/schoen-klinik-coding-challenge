@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, effect, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Anamnese, AnamneseStatus, GetAnamnesesGQL } from '../../graphql/generated';
+import { AnamneseStatus, GetAnamnesesGQL, GetAnamnesesQuery } from '../../graphql/generated';
+import { StatusBadge } from '../../shared/components/status-badge/status-badge';
 
 @Component({
   selector: 'app-anamnesen-list',
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, StatusBadge],
   templateUrl: './anamnesen-list.component.html',
   styleUrl: './anamnesen-list.component.css',
 })
@@ -15,7 +16,9 @@ export class AnamnesenListComponent {
   anamnesesService = inject(GetAnamnesesGQL);
   statusFilter = signal<AnamneseStatus | null>(null);
 
-  anamneses = signal<Anamnese[] | null>(null);
+  // type Anamnese hat availableActions, das brauchen in der Liste aber nicht
+  // deshalb GetAnamnesesQuery['getAnamneses'] hier als type
+  anamneses = signal<GetAnamnesesQuery['getAnamneses'] | null>(null);
 
   constructor() {
     effect(() => {
@@ -25,18 +28,5 @@ export class AnamnesenListComponent {
           next: (result) => this.anamneses.set(result.data?.getAnamneses ?? []),
         });
     });
-  }
-
-  statusBadgeClass(status: AnamneseStatus): string {
-    const map: Record<AnamneseStatus, string> = {
-      [AnamneseStatus.PendingVerification]: 'bg-warning text-dark',
-      [AnamneseStatus.Submitted]: 'bg-info text-dark',
-      [AnamneseStatus.InReview]: 'bg-primary',
-      [AnamneseStatus.Completed]: 'bg-success',
-      [AnamneseStatus.Rejected]: 'bg-danger',
-      [AnamneseStatus.Archived]: 'bg-secondary',
-      [AnamneseStatus.Expired]: 'bg-dark',
-    };
-    return map[status] ?? 'bg-secondary';
   }
 }

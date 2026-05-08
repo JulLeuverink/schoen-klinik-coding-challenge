@@ -40,6 +40,14 @@ export const TRANSITIONS: Transition[] = [
     },
 ];
 
+export const getAvailableActions = (
+    status: AnamneseStatus,
+): AnamneseAction[] => {
+    return TRANSITIONS.filter((trans) => trans.from === status).map(
+        (trans) => trans.action,
+    );
+};
+
 // Beispiel für State Machine auf Basis von State Pattern.
 
 // abstract class AnamneseState {

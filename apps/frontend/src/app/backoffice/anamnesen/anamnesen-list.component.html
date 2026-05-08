@@ -4,9 +4,7 @@
   </div>
 
   <div class="mb-3 d-flex gap-2 flex-wrap">
-    <button class="btn btn-sm btn-outline-secondary" (click)="statusFilter.set(null)">
-      Alle
-    </button>
+    <button class="btn btn-sm btn-outline-secondary" (click)="statusFilter.set(null)">Alle</button>
     @for (status of statusOptions; track status) {
       <button
         class="btn btn-sm"
@@ -39,14 +37,15 @@
           <tr>
             <td>{{ anamnese.firstName }} {{ anamnese.lastName }}</td>
             <td>{{ anamnese.email }}</td>
-            <td>{{ anamnese.dateOfBirth | date:'dd.MM.yyyy' }}</td>
+            <td>{{ anamnese.dateOfBirth | date: 'dd.MM.yyyy' }}</td>
             <td>
-              <span class="badge" [class]="statusBadgeClass(anamnese.status)">
-                {{ anamnese.status }}
-              </span>
+              <app-status-badge [status]="anamnese.status"></app-status-badge>
             </td>
             <td>
-              <a [routerLink]="['/backoffice/anamnesen', anamnese.id]" class="btn btn-sm btn-outline-secondary">
+              <a
+                [routerLink]="['/backoffice/anamnesen', anamnese.id]"
+                class="btn btn-sm btn-outline-secondary"
+              >
                 Details
               </a>
             </td>

@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { AnamneseAction } from 'src/common/enums/anamneseAction';
 import { AnamneseStatus } from 'src/common/enums/anamneseStatus';
 
 @ObjectType()
@@ -49,6 +50,9 @@ export class Anamnese {
     emailVerificationTokenExpiresAt?: Date;
     @Field({ nullable: true })
     emailVerifiedAt?: Date;
+
+    @Field(() => [AnamneseAction])
+    availableActions!: AnamneseAction[];
 
     @Field()
     signatureConfirmed!: boolean;

@@ -9,6 +9,7 @@ import { Anamnese } from './anamnese';
 import { AnamneseDocument, AnamneseDocumentType } from './anamnese.document';
 import { CreateAnamneseInput } from './create-anamnese.input';
 import { StatusService } from './status/status.service';
+import { getAvailableActions } from './status/transition.type';
 import { SubmissionResult } from './submissionResult';
 import { VerificationResult } from './verify-anamnese/verification-result';
 
@@ -45,6 +46,7 @@ export class AnamneseService {
             emailVerificationTokenExpiresAt:
                 doc.emailVerificationTokenExpiresAt,
             emailVerifiedAt: doc.emailVerifiedAt,
+            availableActions: getAvailableActions(doc.status),
         };
     }
 

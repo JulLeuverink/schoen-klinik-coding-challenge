@@ -1,0 +1,17 @@
+@if (actions().length === 0) {
+  <p class="text-muted mb-0">Keine Aktionen verfügbar.</p>
+}
+@if (actions().includes(AnamneseAction.Verify)) {
+  <p class="text-muted mb-0">Der Patient hat seine E-Mail Adresse noch nicht verifiziert!</p>
+} @else {
+  @for (action of actions(); track action) {
+    <button
+      class="btn"
+      [class]="buttonClass(action)"
+      (click)="onClick(action)"
+      [disabled]="action === AnamneseAction.Verify"
+    >
+      {{ buttonLabel(action) }}
+    </button>
+  }
+}

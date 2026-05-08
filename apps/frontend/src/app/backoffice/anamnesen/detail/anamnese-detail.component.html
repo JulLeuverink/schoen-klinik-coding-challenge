@@ -1,0 +1,75 @@
+<div class="container py-4">
+  <div class="mb-4">
+    <a routerLink="/backoffice/anamnesen" class="btn btn-sm btn-outline-secondary">&larr; Zurück</a>
+  </div>
+
+  @if (anamnese() === null) {
+    <p class="text-muted">Wird geladen...</p>
+  } @else {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 mb-0">{{ fullName }}</h1>
+      <app-status-badge [status]="anamnese()!.status"></app-status-badge>
+    </div>
+
+    <app-card>
+      <div class="card-title">Patientendaten</div>
+
+      <dl class="row mb-0">
+        <dt class="col-sm-5">E-Mail</dt>
+        <dd class="col-sm-7">{{ anamnese()!.email }}</dd>
+
+        <dt class="col-sm-5">Geburtsdatum</dt>
+        <dd class="col-sm-7">{{ anamnese()!.dateOfBirth | date: 'dd.MM.yyyy' }}</dd>
+
+        <dt class="col-sm-5">E-Mail verifiziert</dt>
+        <dd class="col-sm-7">
+          @if (anamnese()!.emailVerifiedAt) {
+            {{ anamnese()!.emailVerifiedAt | date: 'dd.MM.yyyy HH:mm' }}
+          } @else {
+            <span class="text-muted">Nein</span>
+          }
+        </dd>
+      </dl>
+    </app-card>
+
+    <div class="row g-4">
+      <app-card>
+        <div class="card-title">Aktionen</div>
+        <app-anamnese-actions
+          [actions]="anamnese()!.availableActions"
+          (transition)="transition($event)"
+        ></app-anamnese-actions>
+      </app-card>
+
+      <app-card>
+        <div class="card-title">Anamnese</div>
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Beschwerden und Beginn</dt>
+          <dd class="col-sm-8">{{ anamnese()!.complaintsAndOnset ?? '–' }}</dd>
+
+          <dt class="col-sm-4">Hausarzt</dt>
+          <dd class="col-sm-8">{{ anamnese()!.primaryCarePhysician ?? '–' }}</dd>
+
+          <dt class="col-sm-4">Medikamente</dt>
+          <dd class="col-sm-8">{{ anamnese()!.medications ?? '–' }}</dd>
+
+          <dt class="col-sm-4">Arbeitsunfall</dt>
+          <dd class="col-sm-8">
+            @if (anamnese()!.workplaceAccident) {
+              Ja
+              @if (anamnese()!.workplaceAccidentDetails) {
+                – {{ anamnese()!.workplaceAccidentDetails }}
+              }
+            } @else {
+              Nein
+            }
+          </dd>
+        </dl>
+
+        <app-anamnese-conditions
+          [contiditons]="anamnese()!.preExistingConditions ?? undefined"
+        ></app-anamnese-conditions>
+      </app-card>
+    </div>
+  }
+</div>

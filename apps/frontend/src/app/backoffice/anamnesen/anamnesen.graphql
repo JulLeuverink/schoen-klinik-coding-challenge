@@ -10,8 +10,8 @@ query GetAnamneses($status: AnamneseStatus) {
   }
 }
 
-query GetAnamnese($id: ID!) {
-  getAnamnese(id: $id) {
+query GetAnamnese($id: String!) {
+  getOneAnamnese(anamneseId: $id) {
     id
     firstName
     lastName
@@ -28,11 +28,13 @@ query GetAnamnese($id: ID!) {
       other
     }
     emailVerifiedAt
+    signatureConfirmed
+    availableActions
   }
 }
 
-mutation TransitionAnamneseStatus($id: ID!, $action: AnamneseAction!) {
-  transitionAnamneseStatus(id: $id, action: $action) {
+mutation TransitionAnamneseStatus($anamneseId: String!, $action: AnamneseAction!) {
+  transition(anamneseId: $anamneseId, action: $action) {
     id
     status
   }

@@ -6,29 +6,29 @@ export type AnamneseDocumentType = HydratedDocument<AnamneseDocument>;
 
 @Schema({ timestamps: true })
 export class AnamneseDocument {
-  @Prop({ required: true, enum: AnamneseStatus })
-  status!: AnamneseStatus;
+    @Prop({ required: true, enum: AnamneseStatus, type: String })
+    status!: AnamneseStatus;
 
-  @Prop({ required: true }) firstName!: string;
-  @Prop({ required: true }) lastName!: string;
-  @Prop({ required: true }) dateOfBirth!: Date;
-  @Prop({ required: true }) email!: string;
+    @Prop({ required: true }) firstName!: string;
+    @Prop({ required: true }) lastName!: string;
+    @Prop({ required: true }) dateOfBirth!: Date;
+    @Prop({ required: true }) email!: string;
 
-  @Prop() complaintsAndOnset?: string;
-  @Prop() workplaceAccident?: boolean;
-  @Prop() workplaceAccidentDetails?: string;
-  @Prop({ type: Object }) preExistingConditions?: {
-    selected: string[];
-    other?: string;
-  };
-  @Prop() primaryCarePhysician?: string;
-  @Prop() medications?: string;
+    @Prop() complaintsAndOnset?: string;
+    @Prop() workplaceAccident?: boolean;
+    @Prop() workplaceAccidentDetails?: string;
+    @Prop({ type: Object }) preExistingConditions?: {
+        selected: string[];
+        other?: string;
+    };
+    @Prop() primaryCarePhysician?: string;
+    @Prop() medications?: string;
 
-  @Prop() emailVerificationToken?: string;
-  @Prop() emailVerificationTokenExpiresAt?: Date;
-  @Prop() emailVerifiedAt?: Date;
+    @Prop() emailVerificationToken?: string;
+    @Prop() emailVerificationTokenExpiresAt?: Date;
+    @Prop() emailVerifiedAt?: Date;
 
-  @Prop({ required: true, default: false }) signatureConfirmed!: boolean;
+    @Prop({ required: true, default: false }) signatureConfirmed!: boolean;
 }
 
 export const AnamneseSchema = SchemaFactory.createForClass(AnamneseDocument);

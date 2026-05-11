@@ -27,9 +27,15 @@ docker compose up --build
 
 Der Frontend-Port kann über die Umgebungsvariable `FRONTEND_PORT` konfiguriert werden (Standard: `8080`).
 
+```bash
+cp .env.example .env
+# FRONTEND_PORT in .env anpassen
+docker compose up --build
+```
+
 ### Mit Devcontainer (empfohlen)
 
-Voraussetzung: Docker Desktop (oder docker nativ z.B. Linux) + VS Code mit dem Remote Development Expansionpack
+Voraussetzung: Docker Desktop (oder docker nativ) + VS Code mit dem Remote Development Expansionpack
 
 1. Repository klonen
 2. In VS Code öffnen -> "Reopen in Container"
@@ -49,6 +55,13 @@ Voraussetzung: Node.js 22, lokale MongoDB-Instanz auf Port 27017
 4. Frontend starten: `npm run start:frontend`
 5. App öffnen: [http://localhost:4200](http://localhost:4200)
 6. GraphQL Playground: [http://localhost:3000](http://localhost:3000)
+
+### Tests ausführen
+
+```bash
+cd apps/backend
+npm test
+```
 
 ## Demo-Flow
 

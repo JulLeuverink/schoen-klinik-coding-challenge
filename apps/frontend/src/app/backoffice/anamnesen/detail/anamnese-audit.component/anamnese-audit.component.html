@@ -1,0 +1,18 @@
+<table class="table table-sm mb-0">
+  <thead>
+    <tr>
+      <th>Zeitpunkt</th>
+      <th>Aktion</th>
+      <th>Actor</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (entry of auditEntries(); track entry.id) {
+      <tr>
+        <td>{{ entry.timestamp | date: 'dd.MM.yyyy HH:mm:ss' }}</td>
+        <td>{{ entry.action }}</td>
+        <td>{{ entry.actor.type }}{{ entry.actor.userId ? ' – ' + entry.actor.userId : '' }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

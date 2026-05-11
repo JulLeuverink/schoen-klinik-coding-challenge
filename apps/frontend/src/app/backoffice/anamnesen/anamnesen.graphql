@@ -33,6 +33,18 @@ query GetAnamnese($id: String!) {
   }
 }
 
+query GetAuditEntries($anamneseId: String!) {
+  getAuditEntries(anamneseId: $anamneseId) {
+    id
+    timestamp
+    action
+    actor {
+      type
+      userId
+    }
+  }
+}
+
 mutation TransitionAnamneseStatus($anamneseId: String!, $action: AnamneseAction!) {
   transition(anamneseId: $anamneseId, action: $action) {
     id

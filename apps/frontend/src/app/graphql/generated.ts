@@ -198,6 +198,19 @@ export type GetAnamneseQuery = {
   };
 };
 
+export type GetAuditEntriesQueryVariables = Exact<{
+  anamneseId: string;
+}>;
+
+export type GetAuditEntriesQuery = {
+  getAuditEntries: Array<{
+    id: string;
+    timestamp: string;
+    action: AuditAction;
+    actor: { type: string; userId: string | null };
+  }>;
+};
+
 export type TransitionAnamneseStatusMutationVariables = Exact<{
   anamneseId: string;
   action: AnamneseAction;
@@ -277,6 +290,33 @@ export const GetAnamneseDocument = gql`
 })
 export class GetAnamneseGQL extends Apollo.Query<GetAnamneseQuery, GetAnamneseQueryVariables> {
   document = GetAnamneseDocument;
+
+  constructor(apollo: Apollo.Apollo) {
+    super(apollo);
+  }
+}
+export const GetAuditEntriesDocument = gql`
+  query GetAuditEntries($anamneseId: String!) {
+    getAuditEntries(anamneseId: $anamneseId) {
+      id
+      timestamp
+      action
+      actor {
+        type
+        userId
+      }
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetAuditEntriesGQL extends Apollo.Query<
+  GetAuditEntriesQuery,
+  GetAuditEntriesQueryVariables
+> {
+  document = GetAuditEntriesDocument;
 
   constructor(apollo: Apollo.Apollo) {
     super(apollo);

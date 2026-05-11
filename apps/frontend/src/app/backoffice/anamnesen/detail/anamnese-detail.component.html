@@ -69,6 +69,11 @@
           [contiditons]="anamnese()!.preExistingConditions ?? undefined"
         ></app-anamnese-conditions>
       </app-card>
+
+      <app-card>
+        <div class="card-title">Dokumentenverlauf</div>
+        <app-anamnese-audit [auditEntries]="auditEntries()"></app-anamnese-audit>
+      </app-card>
     </div>
   }
 </div>

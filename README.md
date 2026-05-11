@@ -51,10 +51,11 @@ Voraussetzung: Node.js 22, lokale MongoDB-Instanz auf Port 27017
 
 1. Repository klonen
 2. `npm run install:all`
-3. Backend starten: `npm run start:backend`
-4. Frontend starten: `npm run start:frontend`
-5. App öffnen: [http://localhost:4200](http://localhost:4200)
-6. GraphQL Playground: [http://localhost:3000](http://localhost:3000)
+3. `.env`-Datei im `apps/backend/`-Verzeichnis anlegen: `MONGODB_URI=mongodb://localhost:27017/anamnesedb`
+4. Backend starten: `npm run start:backend`
+5. Frontend starten: `npm run start:frontend`
+6. App öffnen: [http://localhost:4200](http://localhost:4200)
+7. GraphQL Playground: [http://localhost:3000](http://localhost:3000)
 
 ### Tests ausführen
 

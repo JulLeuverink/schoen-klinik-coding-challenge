@@ -9,12 +9,12 @@ Die Frontend-Apps (öffentlicher Bogen und Backoffice) brauchen lokales State Ma
 
 ## Optionen
 
-1. **Signals + RxJS in Services** (gewählt): moderner Angular-Standard ab v16, geringe Boilerplate
+1. **Signals in Services** (gewählt): moderner Angular-Standard ab v16, geringe Boilerplate
 2. **NgRx**: voll-funktionales Redux-Pattern mit Store, Effects, Selectors. Hohe Boilerplate, etabliert für komplexe Anwendungen
 
 ## Entscheidung
 
-Signals plus RxJS in Services.
+Signals in Services.
 
 ## Konsequenzen
 

@@ -14,11 +14,10 @@ MongoDB ist als Datenbank vorgegeben. Es braucht eine Schicht für Schema-Defini
 
 ## Entscheidung
 
-Mongoose.
+Mongoose. Prisma wäre für den Umfang der Anwendung (wenige Collections, keine Migrationen) überdimensioniert. Mongoose mit `@nestjs/mongoose` ist ausreichend und gut in NestJS integriert.
 
 ## Konsequenzen
 
 - Schemas, Validatoren, Hooks und Indizes über NestJS-Decoratoren
-- Aggregation-Pipelines bei Bedarf verfügbar
 - Geringer Lernpfad da Standard
 - Manuelle Sorgfalt bei Indizes nötig (kein Prisma-Migration-Tooling)

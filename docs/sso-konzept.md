@@ -1,11 +1,11 @@
 # SSO-Konzept Backoffice
 
 > Status: Akzeptiert
-> Letztes Update: 2026-05-04
+> Letztes Update: 2026-05-11
 
 ## Motivation
 
-Die Demo-Implementierung nutzt Username/Passwort mit lokalem JWT (siehe ADR-0006). In Produktion würde das durch eine Anbindung an den Identity-Provider der Klinik ersetzt. Dieses Papier beschreibt den Produktiv-Pfad.
+Die Demo-Implementierung nutzt einen SessionStorage-Stub im Frontend ohne Backend-Auth (siehe [ADR-0006](adr/0006-backoffice-auth-stub.md)). In Produktion würde das durch eine Anbindung an den Identity-Provider der Klinik ersetzt. Dieses Papier beschreibt den Produktiv-Pfad.
 
 Treiber für SSO in Produktion:
 
@@ -18,11 +18,11 @@ Treiber für SSO in Produktion:
 
 | Aspekt | Demo | Produktion |
 |---|---|---|
-| Auth-Mechanismus | Username/Passwort, lokales JWT | OAuth 2.0 Authorization Code Flow mit PKCE über IdP |
-| User-Verwaltung | Seed-User in MongoDB | User aus IdP, kein lokales Password-Storage |
-| Access-Token | JWT signed mit Server-Secret | JWT vom IdP, lokal validiert über JWKS |
-| Rollen | statisch in DB | aus IdP-Claims (App-Roles oder Groups) |
-| Logout | Client-Verwerfung des Tokens | Front-Channel-Logout-Redirect zum IdP |
+| Auth-Mechanismus | SessionStorage-Stub im Frontend, kein Backend-Auth | OAuth 2.0 Authorization Code Flow mit PKCE über IdP |
+| User-Verwaltung | keine (beliebige Rolle wählbar im Login-Formular) | User aus IdP, kein lokales Password-Storage |
+| Access-Token | keiner | JWT vom IdP, lokal validiert über JWKS |
+| Rollen | nicht durchgesetzt | aus IdP-Claims (App-Roles oder Groups) |
+| Logout | SessionStorage-Eintrag löschen | Front-Channel-Logout-Redirect zum IdP |
 | MFA | nicht in Demo | im IdP konfiguriert |
 
 Die Konzept-Implementierung würde technisch über `@nestjs/passport` mit OIDC-Strategy (z.B. `passport-azure-ad`) und auf Frontend-Seite über `oidc-client-ts` oder `angular-auth-oidc-client` laufen.
@@ -69,25 +69,28 @@ Das Konzept ist nicht IdP-spezifisch, sondern lehnt sich an OIDC. Mit identische
 
 Patient-Login (z.B. via Azure AD B2C) ist explizit nicht Teil dieses Konzepts. Patient-Auth ist im `docs/auth-public-bogen.md` als Email-Verifikation gelöst.
 
-## Token-Strategie
+## Implementierungsschritte für Produktion
 
-| Token | Zweck | Lifetime | Speicherort Frontend |
-|---|---|---|---|
-| ID Token | OIDC, User-Claims (sub, email, name, roles), für UI-Personalisierung | meist 60 min | Memory |
-| Access Token | OAuth 2.0, Bearer für API-Aufrufe | 15-60 min | Memory |
-| Refresh Token | langlebig, für Access-Token-Erneuerung | 8-24h, ggf. Sliding | httpOnly Cookie, SameSite=Lax, Secure |
+Um vom SessionStorage-Stub auf echtes SSO umzustellen:
 
-### Backend-Validierung
+**Backend:**
+- NestJS `@nestjs/passport` mit OIDC-Strategy (z.B. `passport-azure-ad`) einrichten
+- `JwtAuthGuard` auf alle Backoffice-GraphQL-Resolver anwenden
+- Access-Token-Validierung gegen IdP-JWKS implementieren (`iss`, `aud`, `exp` prüfen)
+- Rollen aus `roles`-Claim extrahieren und auf interne Rollen (`STAFF`, `ADMIN`) mappen
+- ADMIN-Guard auf Audit-Queries einrichten
 
-Access Token ist signiertes JWT vom IdP. Backend validiert:
+**Frontend:**
+- `oidc-client-ts` oder `angular-auth-oidc-client` integrieren
+- Authorization Code Flow mit PKCE implementieren
+- Token-Storage: Access Token in Memory, Refresh Token als httpOnly Cookie
+- SessionStorage-Stub durch echten Auth-Service ersetzen
+- Front-Channel Logout zum IdP implementieren
 
-- Signatur über IdP-JWKS (Public Keys, periodisch refreshed)
-- `iss` (Issuer): muss gegen erwartete IdP-Issuer-URL prüfen
-- `aud` (Audience): muss gegen eigene Client-ID prüfen
-- `exp` (Expiry): nicht abgelaufen
-- `nbf` (Not before): falls vorhanden, gültig
-
-Keine Round-Trip pro Request zur IdP, lokale Validierung reicht.
+**Infrastruktur:**
+- App-Registration in Entra ID anlegen mit App-Roles `Anamnese.Staff` und `Anamnese.Admin`
+- Redirect-URIs und CORS konfigurieren
+- HTTPS erzwingen
 
 ## Rollen-Mapping
 
@@ -128,11 +131,10 @@ In Demo Out-of-Scope.
 
 ## Was im Demo implementiert wird (Verweis auf ADR-0006)
 
-- Login-Form mit Email und Passwort
-- JWT lokal signed mit Server-Secret, Lifetime z.B. 8h (kein Refresh in Cut-Stufe 2)
-- Argon2id Password-Hashing
-- Zwei Rollen statisch in DB: `STAFF` und `ADMIN`
-- Logout: Client-Verwerfung des Tokens (kein IdP-Logout-Redirect, da kein IdP in Demo)
+- Login-Formular mit Rollenauswahl (kein echtes Passwort)
+- SessionStorage-Eintrag als Login-State
+- `canActivate`/`canActivateChild`-Guard schützt Backoffice-Routen im Frontend
+- Kein Backend-Auth, alle GraphQL-Endpunkte technisch öffentlich erreichbar
 
 ## Was im Konzept beschrieben aber nicht implementiert ist
 
@@ -147,5 +149,5 @@ In Demo Out-of-Scope.
 
 ## Verweise
 
-- ADR-0006: Backoffice-Auth mit JWT (Demo-Pfad)
-- Architektur: `docs/architektur.md` (Komponenten und Schnittstellen)
+- [ADR-0006: Backoffice-Auth als SessionStorage-Stub](adr/0006-backoffice-auth-stub.md)
+- Architektur: [docs/architektur.md](architektur.md) (Komponenten und Schnittstellen)

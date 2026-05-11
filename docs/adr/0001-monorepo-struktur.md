@@ -21,4 +21,4 @@ Einzelrepository ohne Workspace-Linking.
 
 - `npm install` wird separat in `apps/backend/` und `apps/frontend/` ausgeführt (oder über Root-Scripts delegiert)
 - Root-`package.json` enthält Convenience-Scripts wie `install:all`, `start:backend`, `start:frontend`
-- Kein Workspace-Tooling zu erklären oder zu konfigurieren
+- Kein Workspace-Tooling zu konfigurieren

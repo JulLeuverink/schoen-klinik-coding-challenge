@@ -20,7 +20,7 @@ export class AnamneseService {
         private anamneseModel: Model<AnamneseDocumentType>,
         private auditService: AuditService,
         private statusService: StatusService,
-    ) {}
+    ) { }
 
     private readonly NOT_FOUND_TEXT =
         'Anamnese konnte nicht gefunden werden. Id: ';
@@ -53,6 +53,7 @@ export class AnamneseService {
 
     async findAll(status?: AnamneseStatus): Promise<Anamnese[]> {
         const filter = status ? { status } : {};
+        // TODO: Pagination fehlt — in Produktion paginieren
         const docs = await this.anamneseModel.find(filter).exec();
         return docs.map((doc) => this.mapAnamneseDoc(doc));
     }

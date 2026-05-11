@@ -32,3 +32,4 @@ export class AnamneseDocument {
 }
 
 export const AnamneseSchema = SchemaFactory.createForClass(AnamneseDocument);
+// TODO: Indizes für Produktion setzen 

@@ -1,7 +1,7 @@
 # Auth-Konzept öffentlicher Anamnesebogen
 
 > Status: Akzeptiert
-> Letztes Update: 2026-05-04
+> Letztes Update: 2026-05-11
 
 ## Problem und Anforderungen
 
@@ -22,7 +22,7 @@ Daraus folgt:
 
 Identitätsbindung erfolgt über **Email-Verifikation während der Submission** (Double-Opt-In). Der Patient gibt seine Email an, das System sendet einen Bestätigungslink, erst nach Klick gilt der Bogen als eingereicht.
 
-Kein vorab-vergebener Token-Link von der Klinik. Kein Patient-Login. Siehe ADR-0007 für die Optionen-Abwägung.
+Kein vorab-vergebener Token-Link von der Klinik. Kein Patient-Login. Siehe [ADR-0007](adr/0007-public-auth-email-verification.md) für die Optionen-Abwägung.
 
 ## Patient-Flow
 
@@ -37,9 +37,8 @@ sequenceDiagram
     FE->>P: zeigt Formular
     P->>FE: füllt Stammdaten + medizinische Felder + Email aus, submit
     FE->>BE: createAnamneseSubmission(data)
-    BE->>BE: Captcha und Rate-Limit prüfen
     BE->>BE: Server-Side Validation
-    BE->>BE: Verifikations-Token generieren (32 Byte)
+    BE->>BE: Verifikations-Token generieren (UUID)
     BE->>DB: Anamnese persistieren mit Status PENDING_VERIFICATION
     BE-->>FE: success
     FE->>P: Notification mit Demo-Link (Produktion: nichts anzeigen)
@@ -57,23 +56,17 @@ Eigenschaften:
 
 | Eigenschaft | Wert |
 |---|---|
-| Erzeugung | kryptografisch zufällig, 32 Byte hex (`crypto.randomBytes(32).toString('hex')`) |
+| Erzeugung | `crypto.randomUUID()` |
 | Speicherung | DB-gebunden auf der Anamnese-Entität, nicht als JWT |
-| Expiry | 48 Stunden |
+| Expiry | 24 Stunden |
 | Konsumierbarkeit | einmalig, beim Klick invalidiert |
 | Datenmodell | Felder `emailVerificationToken`, `emailVerificationTokenExpiresAt`, `emailVerifiedAt` auf `Anamnese` |
 
 ## Defense-in-Depth: Geburtsdatum-Bestätigung
 
-Beim Klick auf den Bestätigungslink kann zusätzlich das Geburtsdatum abgefragt werden, das beim Submit eingegeben wurde. Erst bei Übereinstimmung wird der Status auf `SUBMITTED` gesetzt.
+Konzeptuell kann beim Klick auf den Bestätigungslink zusätzlich das Geburtsdatum abgefragt werden. Erst bei Übereinstimmung wird der Status auf `SUBMITTED` gesetzt. Schützt vor Token-Leaks (z.B. weitergeleitete Mail, kompromittiertes Postfach).
 
-Vorteile:
-
-- Schützt vor Token-Leaks (z.B. weitergeleitete Mail, kompromittiertes Postfach)
-- Niedrige Hürde für den legitimen Patienten (Geburtsdatum ist ihm bekannt)
-- Patient bestätigt zugleich implizit, dass er Inhaber der eingegebenen Stammdaten ist
-
-In der Demo: Nice-to-have. Wird umgesetzt, falls die Zeit es zulässt. Andernfalls nur konzeptuell beschrieben.
+Nicht implementiert in der Demo.
 
 ## Mail-Versand: Demo vs. Produktion
 
@@ -81,14 +74,7 @@ In der Demo: Nice-to-have. Wird umgesetzt, falls die Zeit es zulässt. Andernfal
 
 In der Demo wird kein Mail-Versand implementiert. SMTP-Provider, Mail-Catcher (MailHog/Mailpit) und ähnliche Infrastruktur sind out of scope.
 
-Stattdessen wird der Verifikations-Link an zwei Stellen sichtbar gemacht:
-
-1. **Frontend nach Submit:** Erfolgsseite zeigt eine Notification mit Hinweis „In Produktion erhalten Sie eine Email mit Bestätigungslink. In dieser Demo-Umgebung wird der Link direkt angezeigt:" plus klickbarer Link und „Link kopieren"-Button
-2. **Backoffice in der Anamnese-Detail-Ansicht:** solange der Bogen im Status `PENDING_VERIFICATION` ist, wird der Verifikations-Link auch im Backoffice angezeigt. Mitarbeitende können den Link bei Bedarf telefonisch oder per Chat an den Patienten weitergeben
-
-In der Demo gibt es keine Resend-Funktion auf Patienten-Seite. Falls der Patient seinen Verifikations-Link verlegt, kontaktiert er die Klinik. Der Workaround läuft über das Backoffice (siehe Punkt 2).
-
-Der Code markiert die betreffenden Stellen mit `// TODO: replace with email send in production` und das README weist auf die bewusste Vereinfachung hin.
+Stattdessen wird der Verifikations-Link im Frontend nach dem Submit als Notification angezeigt.
 
 ### Produktions-Pfad
 
@@ -107,10 +93,10 @@ Unabhängig von der Identitäts-Bindung gilt für den Public-Submit-Endpoint:
 
 | Schutz | Demo | Produktion |
 |---|---|---|
-| Captcha | nicht implementiert (Demo-Vereinfachung) | hCaptcha oder vergleichbar, in Produktion Pflicht |
-| Rate Limiting | NestJS Throttler, z.B. 5 Submits / 10 Min pro IP | identisch, ggf. niedrigere Limits |
+| Captcha | nicht implementiert | hCaptcha oder vergleichbar, Pflicht |
+| Rate Limiting | nicht implementiert | NestJS Throttler, z.B. 5 Submits / 10 Min pro IP |
 | Server-Side Validation | `class-validator` auf Input-DTO | identisch |
-| Input-Sanitisierung | Standard NestJS Pipes plus eigene Sanitizer für Freitext-Felder | identisch |
+| Input-Sanitisierung | nicht implementiert | NestJS Pipes mit Sanitizer für Freitext-Felder |
 | HTTPS | n/a für lokales Setup | Pflicht |
 
 ## GraphQL-Operations-Trennung
@@ -121,7 +107,7 @@ Public und Backoffice nutzen klar getrennte GraphQL-Operationen mit unterschiedl
 |---|---|---|
 | `createAnamneseSubmission` | keine User-Auth, Captcha + Rate Limit als Schutz | Public |
 | `verifyAnamneseEmail(token)` | Token-Validierung gegen DB | Public |
-| `listAnamnesen`, `getAnamnese`, `transitionAnamneseStatus` | JWT (Backoffice) | Mitarbeitende |
+| `listAnamnesen`, `getOneAnamnese`, `transition` | SessionStorage-Guard (Backoffice-Stub) | Mitarbeitende |
 
 Vorteil der Trennung: keine versehentliche Kreuz-Auth, klares Mental-Model für Reviewer und spätere Pflege.
 
@@ -148,27 +134,27 @@ Public-Auth-bezogene Status:
 - `SUBMITTED`: Email-Klick erfolgt, Bogen liegt zur Sichtung im Backoffice
 - `EXPIRED`: 48h ohne Klick, automatischer Übergang
 
-Vollständiges Statusmodell siehe `docs/statusmodell.md`.
+Vollständiges Statusmodell siehe [docs/statusmodell.md](statusmodell.md).
 
 ## Was im Repo demonstriert wird
 
-- Rate Limit über NestJS Throttler auf den Submit-Endpoint
-- Server-Side Validation und Input-Sanitisierung
-- Verifikations-Token-Generierung mit `crypto.randomBytes`
-- Token-Expiry-Validierung
+- Server-Side Validation mit `class-validator` auf dem Input-DTO
+- Verifikations-Token-Generierung mit `crypto.randomUUID()`
+- Token-Expiry-Validierung (24h)
 - Status-Übergang `PENDING_VERIFICATION → SUBMITTED` durch Token-Konsum
-- Anzeige des Verifikations-Links in Frontend-Notification (mit „Link kopieren"-Button) und Backoffice
-- Klare Trennung Public- vs Backoffice-GraphQL-Operationen mit unterschiedlichen Guards
-- Defense-in-Depth Geburtsdatum-Bestätigung beim Klick (Nice-to-have, falls Zeit ausreicht)
+- Anzeige des Verifikations-Links in Frontend-Notification und Backoffice-Detail-Ansicht
+- Klare Trennung Public- vs. Backoffice-GraphQL-Operationen
 
 ## Was im Konzept beschrieben aber nicht implementiert ist
 
-- Echter SMTP-Mail-Versand
-- Mail-Template und Bounce-Handling
-- Captcha (in Produktion Pflicht, in der Demo bewusst weggelassen)
+- Echter SMTP-Mail-Versand, Mail-Template, Bounce-Handling
+- Captcha
+- Rate Limiting
+- Input-Sanitisierung für Freitext-Felder
+- Defense-in-Depth Geburtsdatum-Bestätigung beim Verifikations-Klick
 - SMS-Verifikation als Alternative oder Ergänzung
-- Resend-Funktion auf Patienten-Seite (Workaround in der Demo: Mitarbeiter gibt den Link aus dem Backoffice weiter)
+- Resend-Funktion auf Patienten-Seite
 
 ## Verweis
 
-ADR-0007: Public-Auth mit Email-Verifikation
+[ADR-0007: Public-Auth mit Email-Verifikation](adr/0007-public-auth-email-verification.md)

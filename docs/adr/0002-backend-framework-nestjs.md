@@ -5,7 +5,7 @@
 
 ## Kontext
 
-Das Backend wird in Node.js mit TypeScript und GraphQL umgesetzt. Es braucht klare Modulstruktur, saubere Dependency Injection, und Auth-Integration für zwei sehr unterschiedliche Strategien (Backoffice-JWT und Public-Single-Use-Token).
+Das Backend wird in Node.js mit TypeScript und GraphQL umgesetzt. Es braucht klare Modulstruktur und saubere Dependency Injection. Da NestJS-Erfahrung kaum vorhanden ist, steht zur Wahl: ein opinionated Framework mit fertigen Abstraktionsschichten nutzen oder die nötigen Konzepte (DI, Guards, Pipes, Decoratoren) in Express selbst zusammenstellen.
 
 ## Optionen
 
@@ -14,10 +14,9 @@ Das Backend wird in Node.js mit TypeScript und GraphQL umgesetzt. Es braucht kla
 
 ## Entscheidung
 
-NestJS.
+NestJS. Die fertigen Abstraktionen (DI, Guards, Pipes) sind aus Angular bekannt und ersparen den manuellen Aufbau dieser Strukturen in Express.
 
 ## Konsequenzen
 
 - Stärkere Konventionen reduzieren Boilerplate-Risiko und Eigenfehler
-- Auth via `@nestjs/passport` und Custom Guards erlaubt saubere Trennung der zwei Auth-Strategien
 - Initiale Lernkurve für `@nestjs/graphql` Code-First-Modul

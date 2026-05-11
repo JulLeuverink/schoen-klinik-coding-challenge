@@ -25,3 +25,4 @@ export class AuditEntryDocument {
 
 export const AuditEntrySchema =
     SchemaFactory.createForClass(AuditEntryDocument);
+// TODO: Indizes für Produktion setzen 

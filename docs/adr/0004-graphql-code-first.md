@@ -15,7 +15,7 @@ Das GraphQL-Schema kann in TypeScript-Code (Code-First) oder in einer SDL-Datei 
 
 ## Entscheidung
 
-Code-First mit `@nestjs/graphql`.
+Code-First mit `@nestjs/graphql`. Die TypeScript-Types bleiben unter direkter Kontrolle statt vom Generator bestimmt zu werden. Schema-First mit Codegen wäre eine zusätzliche Abstraktionsschicht, die in einer ohnehin neuen Technologieumgebung (NestJS + GraphQL) den Einstieg unnötig erschweren würde.
 
 ## Konsequenzen
 

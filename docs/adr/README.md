@@ -11,7 +11,7 @@ Format orientiert sich an Michael Nygards ADR-Vorlage.
 | [0003](0003-mongodb-library-mongoose.md) | MongoDB-Library Mongoose | Akzeptiert | 2026-05-04 |
 | [0004](0004-graphql-code-first.md) | GraphQL Code-First mit @nestjs/graphql | Akzeptiert | 2026-05-04 |
 | [0005](0005-frontend-state-signals.md) | Frontend State Management mit Signals und Services | Akzeptiert | 2026-05-04 |
-| [0006](0006-backoffice-auth-jwt.md) | Backoffice-Auth mit JWT | Akzeptiert | 2026-05-04 |
+| [0006](0006-backoffice-auth-stub.md) | Backoffice-Auth als SessionStorage-Stub | Akzeptiert | 2026-05-04 |
 | [0007](0007-public-auth-email-verification.md) | Public-Auth mit Email-Verifikation | Akzeptiert | 2026-05-04 |
 
 ## Vorlage

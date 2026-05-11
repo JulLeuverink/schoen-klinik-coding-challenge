@@ -13,6 +13,7 @@ export class AuditService {
     ) {}
 
     async findByEntityId(anamneseId: Types.ObjectId): Promise<AuditEntry[]> {
+        // TODO: Kein Limit — in Produktion paginieren oder zumindest ein Default-Limit setzen
         const docs = await this.auditModel
             .find({ entityId: anamneseId })
             .exec();

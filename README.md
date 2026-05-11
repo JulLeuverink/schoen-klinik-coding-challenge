@@ -34,6 +34,20 @@ Tech-Entscheidungen sind als ADRs unter `docs/adr/` dokumentiert.
 
 ## Getting Started
 
+### Mit Docker Compose
+
+Voraussetzung: Docker Desktop (oder Docker nativ).
+
+```bash
+docker compose up --build
+```
+
+- App: [http://localhost:8080](http://localhost:8080)
+- GraphQL Playground: [http://localhost:8080/graphql](http://localhost:8080/graphql)  
+
+
+Der Frontend-Port kann über die Umgebungsvariable `FRONTEND_PORT` konfiguriert werden (Standard: `8080`).
+
 TODO: Devcontainer Getting Started schreiben
 TODO: Native Getting Started schreiben
 

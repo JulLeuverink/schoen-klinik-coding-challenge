@@ -14,7 +14,7 @@ import { UserModule } from './user/user.module';
       driver: ApolloDriver,
       autoSchemaFile: true,
     }),
-    MongooseModule.forRoot('mongodb://mongo:27017/anamnesedb'),
+    MongooseModule.forRoot(process.env['MONGODB_URI'] ?? 'mongodb://mongo:27017/anamnesedb'),
     AnamneseModule,
     AuditModule,
     UserModule,

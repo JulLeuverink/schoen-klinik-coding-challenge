@@ -25,7 +25,8 @@ export class AnamneseService {
     private readonly NOT_FOUND_TEXT =
         'Anamnese konnte nicht gefunden werden. Id: ';
     private readonly VERIFICATION_LINK_BASE =
-        'http://localhost:4200/anamnese/bestaetigung/';
+        (process.env['FRONTEND_URL'] ?? 'http://localhost:4200') +
+        '/anamnese/bestaetigung/';
 
     private mapAnamneseDoc(doc: AnamneseDocumentType): Anamnese {
         return {

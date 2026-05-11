@@ -21,7 +21,7 @@ export class AuditService {
                 id: doc._id.toString(),
                 timestamp: doc.timestamp,
                 entityType: doc.entityType,
-                entityId: doc.entityId,
+                entityId: doc.entityId.toString(),
                 action: doc.action,
                 actor: doc.actor,
             };
@@ -43,7 +43,7 @@ export class AuditService {
             timestamp: new Date(),
             entityType: 'Anamnese',
             entityId,
-            action: AuditAction.STATUS_TRANSITION,
+            action: AuditAction.EMAIL_VERIFIED,
             actor: { type: 'patient' },
         });
     }

@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { Types } from 'mongoose';
 import { AuditAction } from 'src/common/enums/auditAction';
 import { AuditActor } from './actor.type';
 
@@ -15,7 +14,7 @@ export class AuditEntry {
     entityType!: string;
 
     @Field(() => ID)
-    entityId!: Types.ObjectId;
+    entityId!: string;
 
     @Field(() => AuditAction)
     action!: AuditAction;
